@@ -23,7 +23,7 @@ public class CommonResponseDto<T> {
                 .build();
     }
 
-    public static <T> CommonResponseDto<T> error(String message, T data) {
+    public static <T> CommonResponseDto<T> error(String message) {
         return CommonResponseDto.<T>builder()
                 .success(false)
                 .message(message)
