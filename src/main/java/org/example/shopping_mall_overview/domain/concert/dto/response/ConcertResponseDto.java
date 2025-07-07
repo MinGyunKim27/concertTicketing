@@ -1,4 +1,4 @@
-package org.example.shopping_mall_overview.domain.user.dto.response;
+package org.example.shopping_mall_overview.domain.concert.dto.response;
 
-public class UserResponseDto {
+public class ConcertResponseDto {
 }
