@@ -1,7 +1,7 @@
-package org.example.shopping_mall_overview.domain.user.repository;
+package org.example.shopping_mall_overview.domain.concert.repository;
 
-import org.example.shopping_mall_overview.domain.user.entity.User;
+import org.example.shopping_mall_overview.domain.concert.entity.Concert;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface ConcertRepository extends JpaRepository<Concert,Long> {
 }

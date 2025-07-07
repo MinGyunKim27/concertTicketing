@@ -1,4 +1,9 @@
 package org.example.shopping_mall_overview.config;
 
-public class PersistenseConfig {
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+@Configuration
+@EnableJpaAuditing
+public class PersistenceConfig {
 }
