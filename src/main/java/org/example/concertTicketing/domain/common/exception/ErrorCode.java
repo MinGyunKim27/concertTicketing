@@ -1,4 +1,4 @@
-package org.example.shopping_mall_overview.domain.common.exception;
+package org.example.concertTicketing.domain.common.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
 package org.example.concertTicketing.domain.common.entity;
 
-public class TimStamp {
+public class TimeStamp {
 }
