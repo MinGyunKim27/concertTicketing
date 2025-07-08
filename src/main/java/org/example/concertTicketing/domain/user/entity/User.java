@@ -33,6 +33,7 @@ public class User extends Timestamped {
     private String nickname;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserRole userRole;
 
     @Builder
@@ -44,4 +45,10 @@ public class User extends Timestamped {
         this.userRole = userRole;
     }
 
+    public User updateUsernameAndNickname(String username, String nickname) {
+        this.username = username;
+        this.nickname = nickname;
+
+        return this;
+    }
 }

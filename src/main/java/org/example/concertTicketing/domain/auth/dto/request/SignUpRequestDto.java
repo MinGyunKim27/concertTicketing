@@ -21,7 +21,7 @@ public class SignUpRequestDto {
     @NotBlank(message = "닉네임을 입력해주세요.")
     private String nickname;
 
-    @NotBlank
+    @NotBlank(message = "역할은 필수입니다.")
     private String userRole;
 
     public SignUpRequestDto(String username, String email, String password, String nickname, String userRole) {

@@ -36,13 +36,22 @@ public class UserController {
 
     // 본인 프로필 수정
     @PatchMapping("/my")
-    public void updateMyProfile(
+    public ResponseEntity<CommonResponseDto<UserUpdateResponseDto>> updateMyProfile(
             @AuthenticationPrincipal Long userId,
             @RequestBody UserUpdateRequestDto requestDto
     ) {
+        UserUpdateResponseDto responseDto = userService.userUpdateMyProfile(userId, requestDto);
 
-        return;
+        CommonResponseDto<UserUpdateResponseDto> response = CommonResponseDto.<UserUpdateResponseDto>builder()
+                .success(true)
+                .message("프로필 수정이 완료되었습니다.")
+                .data(responseDto)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
+
+
 
 
 

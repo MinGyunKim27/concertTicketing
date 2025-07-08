@@ -1,9 +1,11 @@
 package org.example.concertTicketing.domain.user.dto.response;
 
+import lombok.Builder;
 import org.example.concertTicketing.domain.user.UserRole;
 
 import java.time.LocalDateTime;
 
+@Builder
 public class UserProfileResponseDto {
     private Long id;
     private String username;
