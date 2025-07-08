@@ -1,5 +1,7 @@
 package org.example.concertTicketing.domain.ticket.dto.response;
 
+import org.example.concertTicketing.domain.ticket.entity.Ticket;
+
 import java.time.LocalDateTime;
 
 public record TicketResponseDto(
@@ -9,5 +11,13 @@ public record TicketResponseDto(
         Long orderId,
         LocalDateTime reservedAt
 ) {
-
+    public static TicketResponseDto from(Ticket ticket) {
+        return new TicketResponseDto(
+                ticket.getId(),
+                ticket.getConcert().getId(),
+                ticket.getSeat().getId(),
+                ticket.getOrderId(),
+                ticket.getReservedAt()
+        );
+    }
 }
