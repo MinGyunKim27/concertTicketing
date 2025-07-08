@@ -1,8 +1,8 @@
-package org.example.concertTicketing.domain.common.entity;
+package org.example.concertTicketing.domain.venue.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.concertTicketing.domain.common.entity.Timestamped;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "venues")
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Venue {
+public class Venue extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +25,4 @@ public class Venue {
     @Column(name = "total_seats")
     private Integer totalSeats;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }
