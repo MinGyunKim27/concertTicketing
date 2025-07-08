@@ -1,7 +1,10 @@
 package org.example.concertTicketing.domain.user.service;
 
 
+import org.example.concertTicketing.config.PasswordEncoder;
+import org.example.concertTicketing.domain.user.dto.request.UserDeleteRequestDto;
 import org.example.concertTicketing.domain.user.dto.request.UserUpdateRequestDto;
+import org.example.concertTicketing.domain.user.dto.response.UserDeleteResponseDto;
 import org.example.concertTicketing.domain.user.dto.response.UserProfileResponseDto;
 import org.example.concertTicketing.domain.user.dto.response.UserUpdateResponseDto;
 import org.example.concertTicketing.domain.user.entity.User;
@@ -16,10 +19,12 @@ import java.util.Optional;
 public class UserService {
     // 속성
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 생성자
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 기능
@@ -29,7 +34,7 @@ public class UserService {
 
         // 2. 조회 - 삭제된 데이터 조회 안되게!
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         // 3. 응답 dto 만들기
         UserProfileResponseDto responseDto = UserProfileResponseDto.builder()
@@ -56,7 +61,7 @@ public class UserService {
 
         // 2. 조회
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         // 3. 업데이트
         User updateUser = findUser.updateUsernameAndNickname(username, nickname);
@@ -74,5 +79,28 @@ public class UserService {
         // 5. dto 반환
         return updateResponseDto;
     }
+    // 회원 탈퇴
+    public UserDeleteResponseDto deleteUserService(
+            Long userId,
+            UserDeleteRequestDto requestDto
+    ) {
+        // 1. 데이터 준비
+        String password = requestDto.getPassword();
 
+        // 2. 조회
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        // 3. 삭제
+        if(!passwordEncoder.matches(password, findUser.getPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+        findUser.softDelete();
+
+        // 4. 응답 dto 만들기 (서비스-컨트롤러 구조 일관성 있게 유지하기위해 @Builder 만 있는 빈 DTO 만듬)
+//        UserDeleteResponseDto responseDto = UserDeleteResponseDto.builder().build();
+
+        // 5. dto 반환
+        return null;
+    }
 }

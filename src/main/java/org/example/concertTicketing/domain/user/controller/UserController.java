@@ -3,7 +3,9 @@ package org.example.concertTicketing.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.concertTicketing.domain.common.dto.CommonResponseDto;
+import org.example.concertTicketing.domain.user.dto.request.UserDeleteRequestDto;
 import org.example.concertTicketing.domain.user.dto.request.UserUpdateRequestDto;
+import org.example.concertTicketing.domain.user.dto.response.UserDeleteResponseDto;
 import org.example.concertTicketing.domain.user.dto.response.UserProfileResponseDto;
 import org.example.concertTicketing.domain.user.dto.response.UserUpdateResponseDto;
 import org.example.concertTicketing.domain.user.service.UserService;
@@ -51,7 +53,20 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<CommonResponseDto<UserDeleteResponseDto>> deleteUser(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody UserDeleteRequestDto requestDto
+    ) {
+        CommonResponseDto<UserDeleteResponseDto> response = CommonResponseDto.<UserDeleteResponseDto>builder()
+                .success(true)
+                .message("회원 탈퇴가 완료되었습니다.")
+                .data(null)
+                .build();
 
+        return ResponseEntity.ok(response);
+    }
 
 
 

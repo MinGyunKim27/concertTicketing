@@ -36,6 +36,9 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private UserRole userRole;
 
+    // isDelete - ture : 삭제, false : 삭제안됨
+    private boolean isDeleted = false;
+
     @Builder
     public User(String username, String email, String password, String nickname, UserRole userRole) {
         this.username = username;
@@ -50,5 +53,9 @@ public class User extends Timestamped {
         this.nickname = nickname;
 
         return this;
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
     }
 }
