@@ -29,7 +29,8 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
     private String nickname;
-    private boolean isDeleted;
+    @Column(nullable = false)
+    private boolean isDeleted = false;
     private LocalDateTime deletedTime;
 
     public void updateUser(String username, String nickname){
