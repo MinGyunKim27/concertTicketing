@@ -2,11 +2,9 @@ package org.example.concertTicketing.domain.auth.dto.response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @RequiredArgsConstructor
-public class SignInResponseDto {
-
+public class SignUpResponseDto {
     private final String bearerToken;
 }

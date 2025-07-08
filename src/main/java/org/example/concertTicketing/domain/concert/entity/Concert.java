@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.concertTicketing.domain.common.entity.Timestamped;
 
 @Entity
 @Getter
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "concerts") // 테이블명은 "users"
 @Builder
-public class Concert {
+public class Concert extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
