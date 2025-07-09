@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -24,13 +26,14 @@ public class UserController {
     // 기능
     // 본인 프로필 조회
     @GetMapping("/my")
-    public ResponseEntity<CommonResponseDto<UserProfileResponseDto>> myProfile(@AuthenticationPrincipal Long userId) {
+    public ResponseEntity<CommonResponseDto<UserProfileResponseDto>> getMyProfileByUser(@AuthenticationPrincipal Long userId) {
         UserProfileResponseDto responseDto = userService.getMyProfile(userId);
 
         CommonResponseDto<UserProfileResponseDto> response = CommonResponseDto.<UserProfileResponseDto>builder()
                 .success(true)
                 .message("프로필 조회가 완료되었습니다.")
                 .data(responseDto)
+                .timestamp(LocalDateTime.now())
                 .build();
 
         return ResponseEntity.ok(response);
@@ -48,6 +51,7 @@ public class UserController {
                 .success(true)
                 .message("프로필 수정이 완료되었습니다.")
                 .data(responseDto)
+                .timestamp(LocalDateTime.now())
                 .build();
 
         return ResponseEntity.ok(response);
@@ -63,6 +67,7 @@ public class UserController {
                 .success(true)
                 .message("회원 탈퇴가 완료되었습니다.")
                 .data(null)
+                .timestamp(LocalDateTime.now())
                 .build();
 
         return ResponseEntity.ok(response);

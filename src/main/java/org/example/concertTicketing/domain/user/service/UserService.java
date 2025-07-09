@@ -33,7 +33,7 @@ public class UserService {
         // 1. 데이터 준비 - 필요없음
 
         // 2. 조회 - 삭제된 데이터 조회 안되게!
-        User findUser = userRepository.findById(userId)
+        User findUser = userRepository.findByIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         // 3. 응답 dto 만들기

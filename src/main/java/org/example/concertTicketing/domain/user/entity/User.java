@@ -58,4 +58,12 @@ public class User extends Timestamped {
     public void softDelete() {
         this.isDeleted = true;
     }
+
+    public User updateUserByAdmin(String username, String nickname, UserRole userRole) {
+        this.username = username;
+        this.nickname = nickname;
+        this.userRole = userRole;
+
+        return this;
+    }
 }
