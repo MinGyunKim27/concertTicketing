@@ -1,14 +1,14 @@
 package org.example.concertTicketing.domain.user.service;
 
 import org.example.concertTicketing.config.PasswordEncoder;
+import org.example.concertTicketing.domain.common.dto.PagedResponse;
 import org.example.concertTicketing.domain.user.UserRole;
 import org.example.concertTicketing.domain.user.dto.request.UpdateUserProfileByAdminRequestDto;
-import org.example.concertTicketing.domain.user.dto.response.UpdateUserProfileByAdminResponseDto;
-import org.example.concertTicketing.domain.user.dto.response.UserDto;
-import org.example.concertTicketing.domain.user.dto.response.UserListResponseDto;
-import org.example.concertTicketing.domain.user.dto.response.UserProfileByAdminResponseDto;
+import org.example.concertTicketing.domain.user.dto.response.*;
 import org.example.concertTicketing.domain.user.entity.User;
 import org.example.concertTicketing.domain.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,33 +49,22 @@ public class UserAdminService {
         return responseDto;
     }
     // 관리자 -> 사용자 리스트 조회
-    public UserListResponseDto getUserList(String username) {
+    public PagedResponse<UserResponseDto> getUserList(String username, Pageable pageable) {
         // 1. 데이터 준비 = 필요없음.
 
         // 2. 리스트 조회 - username으로 필터링된 리스트
-        List<User> userList;
+        Page<User> userPage;
         if(username == null) {
-            userList = userRepository.findAll();
+            userPage = userRepository.findAll(pageable);
         } else {
-            userList = userRepository.findByUsernameContaining(username);
+            userPage = userRepository.findByUsernameContaining(username, pageable);
         }
 
         // 3. 응답 dto 만들기
-        List<UserDto> userDtoList = userList.stream()
-                .map(user -> UserDto.builder()
-                        .id(user.getId())
-                        .username(user.getUsername())
-                        .email(user.getEmail())
-                        .nickname(user.getNickname())
-                        .userRole(user.getUserRole())
-                        .createdAt(user.getCreatedAt())
-                        .build()
-                ).collect(Collectors.toList());
-
-        UserListResponseDto listResponseDto = new UserListResponseDto(userDtoList);
+        Page<UserResponseDto> userDtoPage = userPage.map(UserResponseDto::of);
 
         // 4. dto 반환
-        return listResponseDto;
+        return PagedResponse.from(userDtoPage);
     }
     // 관리자용 사용자 프로필 수정
     public UpdateUserProfileByAdminResponseDto updateUserProfile(
