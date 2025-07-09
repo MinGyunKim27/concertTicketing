@@ -37,15 +37,20 @@ public class Ticket {
 
     private LocalDateTime canceledAt;
 
-    public static Ticket reserve(User user, Concert concert, Seat seat, Long orderId) {
+    public static Ticket reserve(User user, Concert concert, Seat seat) {
         Ticket ticket = new Ticket();
         ticket.user = user;
         ticket.concert = concert;
         ticket.seat = seat;
-        ticket.orderId = orderId;
         ticket.reservedAt = LocalDateTime.now();
         return ticket;
     }
 
+    public void cancel() {
+        this.canceledAt = LocalDateTime.now();
+    }
 
+    public boolean isCanceled() {
+        return this.canceledAt != null;
+    }
 }
