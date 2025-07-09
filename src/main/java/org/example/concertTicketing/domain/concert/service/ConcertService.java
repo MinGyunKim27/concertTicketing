@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -33,9 +35,11 @@ public class ConcertService {
     private final VenueRepository venueRepository;
     private final SeatRepository seatRepository;
 
+
     private ConcertResponseDto buildResponseDto(Concert concert) {
-        int total = seatRepository.countByConcert(concert);
-        int sold  = seatRepository.countSoldByConcert(concert);
+        Venue venue = concert.getVenue();
+        int total = seatRepository.countByVenue(venue);
+        int sold  = seatRepository.countSoldByVenue(venue);
         return buildResponseDto(concert, total - sold);
     }
 
@@ -52,6 +56,7 @@ public class ConcertService {
     // 콘서트 생성
     @Transactional
     public ConcertResponseDto createConcert(ConcertRequestDto dto) {
+
         Venue venue = venueRepository.findByName(dto.getVenue())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공연장입니다."));
 
@@ -131,7 +136,8 @@ public class ConcertService {
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 콘서트를 찾을 수 없습니다."));
 
-        List<Seat> seats = seatRepository.findbyConcertAndRowLabel(concert,rowLabel);
+        Venue venue = concert.getVenue();
+        List<Seat> seats = seatRepository.findByVenueAndRowLabel(venue,rowLabel);
 
         return seats.stream()
                 .map(seat -> SeatResponseDto.builder()

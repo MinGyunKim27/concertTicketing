@@ -1,6 +1,7 @@
 package org.example.concertTicketing.domain.concert.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.concertTicketing.domain.common.dto.CommonResponseDto;
 import org.example.concertTicketing.domain.concert.dto.request.ConcertRequestDto;
@@ -10,6 +11,7 @@ import org.example.concertTicketing.domain.seat.dto.response.SeatResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -23,7 +25,9 @@ public class ConcertController {
 
     // 콘서트 생성
     @PostMapping("/api/admin/concerts")
-    public CommonResponseDto<ConcertResponseDto> createConcert(@RequestBody ConcertRequestDto dto) {
+    public CommonResponseDto<ConcertResponseDto> createConcert(
+            @RequestBody @Valid ConcertRequestDto dto
+            ) {
         ConcertResponseDto data = concertService.createConcert(dto);
         return CommonResponseDto.ok("콘서트 생성에 성공했습니다.",data);
     }
@@ -32,7 +36,7 @@ public class ConcertController {
     @PatchMapping("/api/admin/concerts/{id}")
     public CommonResponseDto<ConcertResponseDto> updateConcert(
             @PathVariable Long id,
-            @RequestBody ConcertRequestDto dto
+            @RequestBody @Valid ConcertRequestDto dto
     ) {
         ConcertResponseDto data = concertService.updateConcert(id, dto);
         return CommonResponseDto.ok("콘서트 수정에 성공했습니다.",data);
