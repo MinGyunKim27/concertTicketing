@@ -55,6 +55,5 @@
             username: ubuntu
             key: ${{ secrets.EC2_KEY }}
             script: |
-              pkill -f 'java -jar' || true
-              nohup java -jar /home/ubuntu/app/*.jar > /home/ubuntu/app/app.log 2>&1 &
+              bash /home/ubuntu/app/run-deploy.sh
 
