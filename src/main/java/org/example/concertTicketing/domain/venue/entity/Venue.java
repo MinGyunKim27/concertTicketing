@@ -21,8 +21,4 @@ public class Venue extends Timestamped {
 
     @Column(length = 255)
     private String location;
-
-    @Column(name = "total_seats")
-    private Integer totalSeats;
-
 }

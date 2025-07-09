@@ -29,7 +29,6 @@ public class DataInitializer {
                 Venue.builder()
                         .name(name)
                         .location(location)
-                        .totalSeats(600)
                         .build()
         );
 
