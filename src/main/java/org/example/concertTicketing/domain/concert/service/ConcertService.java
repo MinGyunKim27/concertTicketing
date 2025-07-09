@@ -3,11 +3,14 @@ package org.example.concertTicketing.domain.concert.service;
 
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.example.concertTicketing.domain.common.dto.PagedResponse;
 import org.example.concertTicketing.domain.concert.dto.request.ConcertRequestDto;
 import org.example.concertTicketing.domain.concert.dto.response.ConcertResponseDto;
 import org.example.concertTicketing.domain.concert.entity.Concert;
 import org.example.concertTicketing.domain.concert.repository.ConcertRepository;
 import org.example.concertTicketing.domain.seat.dto.response.SeatResponseDto;
+import org.example.concertTicketing.domain.seat.dto.response.SeatStatusDto;
+import org.example.concertTicketing.domain.seat.dto.response.SeatStatusProjection;
 import org.example.concertTicketing.domain.seat.entity.Seat;
 import org.example.concertTicketing.domain.seat.repository.SeatRepository;
 import org.example.concertTicketing.domain.venue.entity.Venue;
@@ -23,9 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -39,8 +39,8 @@ public class ConcertService {
     private ConcertResponseDto buildResponseDto(Concert concert) {
         Venue venue = concert.getVenue();
         int total = seatRepository.countByVenue(venue);
-        int sold  = seatRepository.countSoldByVenue(venue);
-        return buildResponseDto(concert, total - sold);
+        int sold2 = 0;
+        return buildResponseDto(concert, total - sold2);
     }
 
     private ConcertResponseDto buildResponseDto(Concert concert, int remainingTickets) {
@@ -67,7 +67,6 @@ public class ConcertService {
                 .build();
 
         concertRepository.save(concert);
-
 
         return buildResponseDto(concert);
     }
@@ -97,7 +96,7 @@ public class ConcertService {
     }
 
     // 콘서트 검색
-    public Page<ConcertResponseDto> searchConcerts(
+    public PagedResponse<ConcertResponseDto> searchConcerts(
             String searchText,
             LocalDateTime searchStartDate,
             LocalDateTime searchEndDate,
@@ -120,34 +119,29 @@ public class ConcertService {
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
-        return concertRepository.findAll(spec, pageable)
-                .map(this::buildResponseDto);
+        return PagedResponse.from(concertRepository.findAll(spec, pageable)
+                .map(this::buildResponseDto));
     }
 
     // 콘서트 단건 조회
     public ConcertResponseDto getConcert(Long id) {
         Concert concert = concertRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 콘서트를 찾을 수 없습니다."));
-                return buildResponseDto(concert, 0);
+                return buildResponseDto(concert);
     }
 
     // 콘서트 좌석 조회
-    public List<SeatResponseDto> getSeats(Long concertId, char rowLabel) {
-        Concert concert = concertRepository.findById(concertId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 콘서트를 찾을 수 없습니다."));
-
-        Venue venue = concert.getVenue();
-        List<Seat> seats = seatRepository.findByVenueAndRowLabel(venue,rowLabel);
-
-        return seats.stream()
-                .map(seat -> SeatResponseDto.builder()
-                        .seatId(seat.getId())
-                        .label(seat.getLabel())
-                        .rowLabel(seat.getRowLabel())
-                        .column(seat.getColumn())
-                        .isReserved(seat.isReserved())
-                        .build()
-                )
+    public List<SeatStatusDto> getSeats(Long concertId, String rowLabel) {
+        List<SeatStatusProjection> projections = seatRepository.findSeatStatusesByConcertIdAndRowLabel(concertId, rowLabel);
+        return projections.stream()
+                .map(p -> new SeatStatusDto(
+                        p.getSeatId(),
+                        p.getRowLabel(),
+                        p.getColumnNumber(),
+                        p.getSeatLabel(),
+                        p.getPrice(),
+                        p.getIsReserved() != 0
+                ))
                 .collect(Collectors.toList());
     }
 

@@ -7,9 +7,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.concertTicketing.domain.common.entity.Timestamped;
+import org.example.concertTicketing.domain.ticket.entity.Ticket;
 import org.example.concertTicketing.domain.venue.entity.Venue;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
