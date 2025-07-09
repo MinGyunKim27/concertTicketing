@@ -34,7 +34,7 @@ public class TicketService {
     private final SeatRepository seatRepository;
 
     @Transactional
-    public TicketReserveResponseDto reserveTicketsService(Long userId, Long concertId, TicketReserveRequestDto dto) {
+    public List<Ticket> reserveTicketsService(Long userId, Long concertId, TicketReserveRequestDto dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다."));
 
@@ -54,17 +54,17 @@ public class TicketService {
             Ticket ticket = Ticket.reserve(user, concert, seat);
             reserved.add(ticketRepository.save(ticket));
         }
-        return TicketReserveResponseDto.of(reserved, concertId);
+        return reserved;
     }
 
     @Transactional(readOnly = true)
-    public TicketListResponseDto getUserTicketsService(Long userId, Pageable pageable) {
-        Page<Ticket> ticketPage = ticketRepository.findByUserId(userId, pageable);
-        return TicketListResponseDto.from(ticketPage);
+    public Page<TicketResponseDto> getUserTicketsService(Long userId, Pageable pageable) {
+        return ticketRepository.findByUserId(userId, pageable)
+                .map(TicketResponseDto::from);
     }
 
     @Transactional
-    public TicketCancelResponseDto cancelTicketService(Long orderId) {
+    public Ticket cancelTicketService(Long orderId) {
         Ticket ticket = ticketRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("예매 내역이 없습니다."));
 
@@ -72,7 +72,7 @@ public class TicketService {
             throw new IllegalStateException("이미 취소된 티켓입니다.");
         }
         ticket.cancel();
-        return TicketCancelResponseDto.of(ticket);
+        return ticket;
     }
 
 

@@ -20,13 +20,9 @@ public class TicketListResponseDto {
     private int size;
     private int number;
 
-    public static TicketListResponseDto from(Page<Ticket> ticketPage) {
-        List<TicketResponseDto> list = ticketPage.getContent().stream()
-                .map(TicketResponseDto::from)
-                .collect(Collectors.toList());
-
+    public static TicketListResponseDto of(Page<TicketResponseDto> ticketPage) {
         return new TicketListResponseDto(
-                list,
+                ticketPage.getContent(),
                 ticketPage.getTotalElements(),
                 ticketPage.getTotalPages(),
                 ticketPage.getSize(),
