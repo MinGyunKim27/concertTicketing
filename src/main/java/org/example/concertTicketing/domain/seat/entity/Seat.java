@@ -9,12 +9,13 @@ import lombok.NoArgsConstructor;
 import org.example.concertTicketing.domain.common.entity.Timestamped;
 import org.example.concertTicketing.domain.venue.entity.Venue;
 
+
 @Entity
-@Table(name = "seats")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "seats")
 public class Seat extends Timestamped {
 
     @Id
@@ -25,7 +26,7 @@ public class Seat extends Timestamped {
     @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 
-    @Column(name = "row_label", length = 2, nullable = false)
+    @Column(name = "row_label", nullable = false)
     private String rowLabel;
 
     @Column(name = "column_number", nullable = false)
@@ -37,4 +38,10 @@ public class Seat extends Timestamped {
     @Column(nullable = true)
     private Long price;
 
+
+    private boolean isReserved;
+
+    public boolean isReserved() {
+        return isReserved;
+    }
 }
