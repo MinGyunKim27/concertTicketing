@@ -36,6 +36,7 @@ public class ConcertService {
     private final SeatRepository seatRepository;
 
 
+    //이걸로 항상 카운트 한걸 넣어주면 항상 쿼리가 3번 이상 실행됩니다 아예 로직을 바꿔야함
     private ConcertResponseDto buildResponseDto(Concert concert) {
         Venue venue = concert.getVenue();
         int total = seatRepository.countByVenue(venue);
