@@ -28,7 +28,7 @@ public class TicketController {
     public ResponseEntity<ApiResponse<TicketReserveResponseDto>> reserveTickets(
             @PathVariable Long concertId,
             @RequestBody TicketReserveRequestDto request,
-            @AuthenticationPrincipal Long userId   // 임시 테스트용, jwt 도입 후 수정 예정
+            @AuthenticationPrincipal Long userId
             ) {
         List<Ticket> tickets = ticketService.reserveTicketsService(userId, concertId, request);
         TicketReserveResponseDto response = TicketReserveResponseDto.of(tickets, concertId);
@@ -36,20 +36,14 @@ public class TicketController {
     }
 
     @GetMapping("/users/my/tickets")
-    public ResponseEntity<Map<String, Object>> getMyTickets(
+    public ResponseEntity<ApiResponse<TicketListResponseDto>> getMyTickets(
             @AuthenticationPrincipal Long userId,
             @PageableDefault(size = 10) Pageable pageable
     ) {
         Page<TicketResponseDto> page = ticketService.getUserTicketsService(userId, pageable);
         TicketListResponseDto data = TicketListResponseDto.of(page);
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("message", "티켓 조회가 완료되었습니다.");
-        response.put("data", data);
-        response.put("timestamp", LocalDateTime.now().toString());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("티켓 조회가 완료되었습니다.", data));
     }
 
     @DeleteMapping("/users/my/tickets/{orderId}")
