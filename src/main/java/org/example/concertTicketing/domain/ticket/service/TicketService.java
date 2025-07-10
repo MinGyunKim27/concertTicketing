@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,19 +42,23 @@ public class TicketService {
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 콘서트를 찾을 수 없습니다."));
 
-        List<Ticket> reserved = new ArrayList<>();
+        // UUID 기반 orderId 생성
+        Long orderId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
 
-        for (Long seatId : dto.seatIds()) {
-            if (ticketRepository.existsBySeatIdAndConcertIdAndCanceledAtIsNull(seatId, concertId)) {
-                throw new IllegalStateException("이미 선택된 좌석입니다." + seatId);
-            }
+        List<Ticket> reserved = dto.seatIds().stream()
+                .map(seatId -> {
+                    if (ticketRepository.existsBySeatIdAndConcertIdAndCanceledAtIsNull(seatId, concertId)) {
+                        throw new IllegalStateException("이미 선택된 좌석입니다.");
+                    }
 
-            Seat seat = seatRepository.findById(seatId)
-                    .orElseThrow(() -> new EntityNotFoundException("해당 좌석을 찾을 수 없습니다."));
+                    Seat seat = seatRepository.findById(seatId)
+                            .orElseThrow(() -> new EntityNotFoundException("해단 좌석을 찾을 수 없습니다."));
 
-            Ticket ticket = Ticket.reserve(user, concert, seat);
-            reserved.add(ticketRepository.save(ticket));
-        }
+                    return Ticket.reserve(user, concert, seat, orderId);
+                })
+                .map(ticketRepository::save)
+                .toList();
+
         return reserved;
     }
 
