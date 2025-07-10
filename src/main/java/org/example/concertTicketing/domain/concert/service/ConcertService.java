@@ -15,6 +15,8 @@ import org.example.concertTicketing.domain.seat.entity.Seat;
 import org.example.concertTicketing.domain.seat.repository.SeatRepository;
 import org.example.concertTicketing.domain.venue.entity.Venue;
 import org.example.concertTicketing.domain.venue.repository.VenueRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -73,6 +75,7 @@ public class ConcertService {
     }
 
     // 콘서트 수정
+    @CacheEvict(value = "concert", key = "#id") // << 캐시 사용시 수정될때(캐시 무효화) 어노테이션입니다.
     @Transactional
     public ConcertResponseDto updateConcert(Long id, ConcertRequestDto dto) {
         Concert concert = concertRepository.findById(id)
@@ -87,6 +90,7 @@ public class ConcertService {
     }
 
     // 콘서트 삭제
+    @CacheEvict(value = "concert", key = "#id") //  << 캐시 사용시 삭제될때 어노테이션입니다.
     @Transactional
     public void deleteConcert(Long id) {
         if(!concertRepository.existsById(id)) {
@@ -124,7 +128,9 @@ public class ConcertService {
     }
 
     // 콘서트 단건 조회
+    @Cacheable(value = "concert", key = "#id") // << 캐시 사용 어노테이션 추가하였습니다.
     public ConcertResponseDto getConcert(Long id) {
+        System.out.println("getConcert() 호출, concertId=" + id);
         Concert concert = concertRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 콘서트를 찾을 수 없습니다."));
                 return buildResponseDto(concert);
