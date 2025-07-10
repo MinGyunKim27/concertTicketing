@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<CommonResponseDto<?>> handleIllegalArgumentException(IllegalArgumentException e) {
-        CommonResponseDto<?> response = CommonResponseDto.error("잘못된 요청 형식입니다.");
+        CommonResponseDto<?> response = CommonResponseDto.error(e.getMessage());
         log.error("잘못된 요청 형식 발생 ", e);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
