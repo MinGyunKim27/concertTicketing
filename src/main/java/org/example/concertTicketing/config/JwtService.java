@@ -3,6 +3,7 @@ package org.example.concertTicketing.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -10,7 +11,9 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private String secret = "AaSS-SSSeee-eeETtt-EeSeSe-eETaS-SSeKkk-TllL-OopPQnNzX";
+
+    @Value("${jwt.secret.key}")
+    private String secret;
 
     /**
      * 토큰 만들기
@@ -21,23 +24,20 @@ public class JwtService {
         SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
 
         // 2. 데이터 준비
-        String subject = userId.toString(); // 사용자 준비
         Date now = new Date();                // 현재시간
-        Date expiration = new Date(now.getTime() + 1000 * 180); // 만료시간 설정 1분뒤
+        Date expiration = new Date(now.getTime() + 1000 * 1800); // 만료시간 설정 30분
 
         // 로그 찍기
         System.out.println("JWT 생성 시 userRole = " + userRole);
 
         // 2. 토큰 만들기
-        String jwt = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(userId.toString())
                 .setIssuedAt(now)
                 .claim("userRole", userRole)
-//                .claim("userRole", "USER") -> 무조건 USER로 고정됨! 인자로 받은 userRole을 넣어야함! (고정이 아닌 실제 권한을 넣어야함)
                 .setExpiration(expiration)
                 .signWith(secretKey)
                 .compact();
-        return jwt;
     }
 
     /**
@@ -59,10 +59,9 @@ public class JwtService {
         // String value1  = (String) claims.get("key1"); // 커스텀하게 설정한 요소 추출
 
         // 3. 타입 변환
-        long userId = Long.parseLong(subject);
 
         // 4. 반환
-        return userId;
+        return Long.parseLong(subject);
     }
 
     public Claims extractClaims(String token) {

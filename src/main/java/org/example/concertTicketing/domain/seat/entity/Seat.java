@@ -35,13 +35,5 @@ public class Seat extends Timestamped {
     @Column(length = 10, nullable = false)
     private String label;
 
-    @Column(nullable = true)
     private Long price;
-
-
-    private boolean isReserved;
-
-    public boolean isReserved() {
-        return isReserved;
-    }
 }
