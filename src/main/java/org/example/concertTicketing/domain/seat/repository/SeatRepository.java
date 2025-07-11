@@ -1,7 +1,6 @@
 package org.example.concertTicketing.domain.seat.repository;
 
-import org.example.concertTicketing.domain.concert.entity.Concert;
-import org.example.concertTicketing.domain.seat.dto.response.SeatStatusDto;
+
 import org.example.concertTicketing.domain.seat.dto.response.SeatStatusProjection;
 import org.example.concertTicketing.domain.seat.entity.Seat;
 import org.example.concertTicketing.domain.venue.entity.Venue;
@@ -14,6 +13,7 @@ import java.util.List;
 public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     Long countByVenue(Venue venue);
+
 
     @Query(value = """
     SELECT
@@ -40,4 +40,5 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             @Param("rowLabel") String rowLabel
     );
 
+    List<Seat> findByLabelContaining(String a1);
 }
