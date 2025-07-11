@@ -38,6 +38,30 @@ public class TicketController {
         return ResponseEntity.ok(ApiResponse.success("콘서트 예매에 성공했습니다.", response));
     }
 
+    // 티켓 예매 Lettuce
+    @PostMapping("/concerts/{concertId}/tickets/v1")
+    public ResponseEntity<ApiResponse<TicketReserveResponseDto>> reserveTicketsV1(
+            @PathVariable Long concertId,
+            @RequestBody TicketReserveRequestDto request,
+            @AuthenticationPrincipal Long userId
+    ) throws InterruptedException {
+        List<Ticket> tickets = ticketService.reserveTicketsLettuce(userId, concertId, request);
+        TicketReserveResponseDto response = TicketReserveResponseDto.of(tickets, concertId);
+        return ResponseEntity.ok(ApiResponse.success("콘서트 예매에 성공했습니다.", response));
+    }
+
+    // 티켓 예매 Redisson
+    @PostMapping("/concerts/{concertId}/tickets/v2")
+    public ResponseEntity<ApiResponse<TicketReserveResponseDto>> reserveTicketsV2(
+            @PathVariable Long concertId,
+            @RequestBody TicketReserveRequestDto request,
+            @AuthenticationPrincipal Long userId
+    ) throws InterruptedException {
+        List<Ticket> tickets = ticketService.reserveTicketsRedisson(userId, concertId, request);
+        TicketReserveResponseDto response = TicketReserveResponseDto.of(tickets, concertId);
+        return ResponseEntity.ok(ApiResponse.success("콘서트 예매에 성공했습니다.", response));
+    }
+
     // 티켓 예매 조회
     @GetMapping("/users/my/tickets")
     public ResponseEntity<ApiResponse<TicketListResponseDto>> getMyTickets(
@@ -57,30 +81,4 @@ public class TicketController {
         TicketCancelResponseDto response = TicketCancelResponseDto.of(tickets);
         return ResponseEntity.ok(ApiResponse.success("주문 취소에 성공했습니다.", response));
     }
-
-    // 좌석 선택 시 -> Redis에 Lock 저장
-    @PostMapping("/concerts/{concertId}/seats/lock")
-    public ResponseEntity<ApiResponse<String>> lockSeats(
-            @PathVariable Long concertId,
-            @RequestBody SeatLockRequestDto requestDto,
-            @AuthenticationPrincipal Long userId
-    ) {
-       redisService.lockSeats(userId, concertId, requestDto.seatIds());
-
-       return ResponseEntity.ok(ApiResponse.success("좌석이 임시로 예약되었습니다."));
-    }
-
-    // 클라이언트에서 조회할 수 있도록
-    @GetMapping("/concerts/{concertId}/seats")
-    public ResponseEntity<ApiResponse<List<SeatStatusDto>>> getSeatStatuses(
-            @PathVariable Long concertId,
-            @RequestParam String rowLabel
-    ) {
-        List<SeatStatusDto> seatStatuses = ticketService.getSeatStatusesWithLock(concertId, rowLabel);
-        return ResponseEntity.ok(ApiResponse.success("좌석 상태 조회 성공", seatStatuses));
-    }
-    // => 테스트 예시
-    //누군가 seatId = 10에 대해 Redis 락을 잡으면
-    // /concerts/{concertId}/seats?rowLabel=A 조회 시 해당 좌석은 isReserved: true로 표시됨
-    //Redis TTL 5분 지나면 자동으로 락 풀림 → 다시 선택 가능
 }
