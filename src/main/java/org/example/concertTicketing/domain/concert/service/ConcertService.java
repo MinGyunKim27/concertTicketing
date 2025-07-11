@@ -154,7 +154,7 @@ public class ConcertService {
             // 2. 캐시에 없으면 DB에서 조회
             Concert concert = concertRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("해당 콘서트를 찾을 수 없습니다."));
-            int remaining = seatRepository.countByVenue(concert.getVenue());
+            long remaining = seatRepository.countByVenue(concert.getVenue());
 
             dto = ConcertResponseDto.builder()
                     .id(concert.getId())
