@@ -54,7 +54,7 @@ public class ConcertController {
         return CommonResponseDto.ok("콘서트 삭제에 성공했습니다.", null);
     }
 
-    // 콘서트 검색
+    // 콘서트 전체 검색
     @GetMapping("/api/concerts")
     public CommonResponseDto<PagedResponse<ConcertResponseDto>> searchConcerts(
             @RequestParam(required = false) String searchText,

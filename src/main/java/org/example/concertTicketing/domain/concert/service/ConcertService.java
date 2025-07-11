@@ -1,7 +1,7 @@
 package org.example.concertTicketing.domain.concert.service;
 
 
-import jakarta.persistence.criteria.Predicate;
+
 import lombok.RequiredArgsConstructor;
 import org.example.concertTicketing.domain.common.dto.PagedResponse;
 import org.example.concertTicketing.domain.concert.dto.request.ConcertRequestDto;
@@ -59,7 +59,7 @@ public class ConcertService {
     }
 
     // 콘서트 수정
-    // 굳
+
     @Transactional
     public ConcertResponseDto updateConcert(Long id, ConcertRequestDto dto) {
         Concert concert = concertRepository.findById(id)

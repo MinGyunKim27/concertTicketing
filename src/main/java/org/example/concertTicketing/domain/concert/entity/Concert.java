@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "concerts") // 테이블명은 "users"
+@Table(name = "concerts")
 @Builder
 public class Concert extends Timestamped {
     @Id
