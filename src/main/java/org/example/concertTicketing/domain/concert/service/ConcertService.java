@@ -144,7 +144,7 @@ public class ConcertService {
                         p.getColumnNumber(),
                         p.getSeatLabel(),
                         p.getPrice(),
-                        p.getIsReserved() != 0
+                        p.getIsReserved()
                 ))
                 .collect(Collectors.toList());
     }
