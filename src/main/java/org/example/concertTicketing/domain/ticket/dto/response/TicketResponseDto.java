@@ -14,9 +14,9 @@ public record TicketResponseDto(
     public static TicketResponseDto from(Ticket ticket) {
         return new TicketResponseDto(
                 ticket.getId(),
-                ticket.getConcert().getId(),
+                ticket.getOrder().getConcert().getId(),
                 ticket.getSeat().getId(),
-                ticket.getOrderId(),
+                ticket.getOrder().getId(),
                 ticket.getReservedAt()
         );
     }

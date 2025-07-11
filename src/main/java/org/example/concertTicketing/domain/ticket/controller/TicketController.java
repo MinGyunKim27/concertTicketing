@@ -24,6 +24,7 @@ public class TicketController {
 
     private final TicketService ticketService;
 
+    // 티켓 예매
     @PostMapping("/concerts/{concertId}/tickets")
     public ResponseEntity<ApiResponse<TicketReserveResponseDto>> reserveTickets(
             @PathVariable Long concertId,
@@ -35,6 +36,7 @@ public class TicketController {
         return ResponseEntity.ok(ApiResponse.success("콘서트 예매에 성공했습니다.", response));
     }
 
+    // 티켓 예매 조회
     @GetMapping("/users/my/tickets")
     public ResponseEntity<ApiResponse<TicketListResponseDto>> getMyTickets(
             @AuthenticationPrincipal Long userId,
@@ -46,10 +48,11 @@ public class TicketController {
         return ResponseEntity.ok(ApiResponse.success("티켓 조회가 완료되었습니다.", data));
     }
 
+    // 티켓 예매 취소
     @DeleteMapping("/users/my/tickets/{orderId}")
     public ResponseEntity<ApiResponse<TicketCancelResponseDto>> cancelTicket(@PathVariable Long orderId) {
-        Ticket ticket = ticketService.cancelTicketService(orderId);
-        TicketCancelResponseDto response = TicketCancelResponseDto.of(ticket);
+        List<Ticket> tickets = ticketService.cancelTicketService(orderId);
+        TicketCancelResponseDto response = TicketCancelResponseDto.of(tickets);
         return ResponseEntity.ok(ApiResponse.success("주문 취소에 성공했습니다.", response));
     }
 }

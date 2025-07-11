@@ -34,8 +34,7 @@ public class Concert extends Timestamped {
     @Column(nullable = false)
     private LocalDateTime date;
 
-    @OneToMany(mappedBy = "concert")
-    private List<Ticket> tickets;
+
 
     public void update(String title, LocalDateTime date, Venue venue) {
         this.title = title;
