@@ -19,4 +19,5 @@ public class ConcertResponseDto implements Serializable {
     private LocalDateTime date;
     private String venue;
     private Integer remainingTickets;
+    private int viewCount;
 }
