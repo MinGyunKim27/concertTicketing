@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
 
-    int countByVenue(Venue venue);
+    Long countByVenue(Venue venue);
 
     @Query(value = """
     SELECT
