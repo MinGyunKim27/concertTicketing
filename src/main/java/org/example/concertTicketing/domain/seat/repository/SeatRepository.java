@@ -1,7 +1,6 @@
 package org.example.concertTicketing.domain.seat.repository;
 
-import org.example.concertTicketing.domain.concert.entity.Concert;
-import org.example.concertTicketing.domain.seat.dto.response.SeatStatusDto;
+
 import org.example.concertTicketing.domain.seat.dto.response.SeatStatusProjection;
 import org.example.concertTicketing.domain.seat.entity.Seat;
 import org.example.concertTicketing.domain.venue.entity.Venue;
@@ -40,4 +39,5 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             @Param("rowLabel") String rowLabel
     );
 
+    List<Seat> findByLabelContaining(String a1);
 }

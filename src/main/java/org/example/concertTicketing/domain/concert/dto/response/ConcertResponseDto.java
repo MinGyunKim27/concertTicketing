@@ -21,6 +21,7 @@ public class ConcertResponseDto implements Serializable {
     private String venue;
     private Long remainingTickets;
     private int viewCount;
+
     public static ConcertResponseDto buildResponseDto(Concert concert, Long remainingTickets) {
         return ConcertResponseDto.builder()
                 .id(concert.getId())
@@ -30,5 +31,4 @@ public class ConcertResponseDto implements Serializable {
                 .remainingTickets(remainingTickets)
                 .build();
     }
-
 }
