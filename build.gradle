@@ -36,10 +36,14 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
+    //radis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    //cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
     // bcrypt
     implementation 'at.favre.lib:bcrypt:0.10.2'
 
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     // jwt
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'

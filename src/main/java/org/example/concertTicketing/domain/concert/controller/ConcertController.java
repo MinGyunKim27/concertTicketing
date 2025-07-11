@@ -1,6 +1,7 @@
 package org.example.concertTicketing.domain.concert.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.concertTicketing.domain.common.dto.CommonResponseDto;
@@ -15,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +27,7 @@ import java.util.List;
 public class ConcertController {
 
     private final ConcertService concertService;
+    private final View view;
 
     // 콘서트 생성
     // 굳
@@ -73,8 +77,18 @@ public class ConcertController {
 
     // 콘서트 단건 조회
     @GetMapping("/api/concerts/{id}")
-    public CommonResponseDto<ConcertResponseDto> getConcert(@PathVariable Long id) {
-        ConcertResponseDto data = concertService.getConcert(id);
+    public CommonResponseDto<ConcertResponseDto> getConcert(
+            @PathVariable Long id,
+            HttpServletRequest request,
+            Principal principal) {
+        //로그인 유저 ID 나 비로그인 유저 IP가져오기
+        String userIdOrIp;
+        if (principal != null) {
+            userIdOrIp = principal.getName();
+        } else {
+            userIdOrIp = request.getRemoteAddr();
+        }
+        ConcertResponseDto data = concertService.getConcert(id,userIdOrIp);
         return CommonResponseDto.ok("콘서트 조회에 성공했습니다.", data);
     }
 
