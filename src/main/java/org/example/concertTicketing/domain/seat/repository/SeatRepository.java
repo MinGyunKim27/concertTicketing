@@ -14,7 +14,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     Long countByVenue(Venue venue);
 
-
     @Query(value = """
     SELECT
         s.id AS seatId,
