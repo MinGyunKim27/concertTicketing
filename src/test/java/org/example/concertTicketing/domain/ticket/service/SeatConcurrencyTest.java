@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.example.concertTicketing.domain.user.entity.User;
+import org.springframework.context.ApplicationContext;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +35,9 @@ class SeatConcurrencyTest {
     private TicketService ticketService;
 
     @Autowired
+    private TicketCommandService ticketCommandService;
+
+    @Autowired
     private TicketRepository ticketRepository;
 
     @Autowired
@@ -47,6 +51,9 @@ class SeatConcurrencyTest {
 
     @Autowired
     private SeatRepository seatRepository;
+
+    @Autowired
+    private ApplicationContext context;
 
     private Long concertId;
     private Long seatId;
@@ -182,6 +189,42 @@ class SeatConcurrencyTest {
                 try {
                     TicketReserveRequestDto dto = new TicketReserveRequestDto(List.of(seatId));
                     ticketService.reserveTicketsRedisson(userId, concertId, dto);
+                } catch (Exception e) {
+                    System.out.println("예약 실패 → " + e.getMessage());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        long reservedCount = ticketRepository.countBySeatId(seatId);
+        Assertions.assertEquals(1, reservedCount); // 해당 좌석은 단 1명만 예약 가능해야 함
+    }
+
+
+    @Test
+    void 동시에_같은_좌석을_예약할때_중복되지_않아야한다_v3() throws InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
+        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
+        TicketService proxy = context.getBean(TicketService.class);
+
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            String randomSuffix = UUID.randomUUID().toString().substring(0, 8);
+            final Long userId = userRepository.save(
+                    User.builder()
+                            .username("user" + randomSuffix)
+                            .nickname("닉네임" + i)
+                            .email("user" + randomSuffix + "@test.com")
+                            .password("encodedPw")
+                            .userRole(UserRole.USER)
+                            .build()
+            ).getId();
+            executorService.execute(() -> {
+                try {
+                    TicketReserveRequestDto dto = new TicketReserveRequestDto(List.of(seatId));
+                    proxy.reserveTicketsAop(userId, concertId, dto);
                 } catch (Exception e) {
                     System.out.println("예약 실패 → " + e.getMessage());
                 } finally {

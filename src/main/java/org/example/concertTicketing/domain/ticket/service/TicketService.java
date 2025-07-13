@@ -2,6 +2,7 @@ package org.example.concertTicketing.domain.ticket.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.concertTicketing.domain.common.annotation.MultiLock;
 import org.example.concertTicketing.domain.concert.entity.Concert;
 import org.example.concertTicketing.domain.concert.repository.ConcertRepository;
 import org.example.concertTicketing.domain.order.entity.Order;
@@ -20,6 +21,7 @@ import org.example.concertTicketing.domain.user.repository.UserRepository;
 import org.redisson.RedissonMultiLock;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,10 @@ public class TicketService {
     private final RedisService redisService;
     private final StringRedisTemplate redisTemplate;
     private final RedissonClient redissonClient;
+
+    private final TicketCommandService ticketCommandService;
+
+
 
     // 티켓 예매 서비스
     @Transactional
@@ -96,14 +102,8 @@ public class TicketService {
         String lockOwner = UUID.randomUUID().toString(); // 락 주인 식별용
 
         try {
-            // 1. 분산 락 획득
-            for (Long seatId : seatIds) {
-                String key = "lock:concert:" + concertId + ":seat:" + seatId;
-                boolean locked = redisService.lock(key, lockOwner, 10_000);
-                if (!locked) {
-                    throw new IllegalStateException("이미 예약 중인 좌석입니다: seatId=" + seatId);
-                }
-            }
+
+            redisService.lockSeats(userId,concertId,seatIds);
 
             // 2. 사용자, 콘서트, 좌석 정보 조회
             User user = userRepository.findById(userId)
@@ -196,6 +196,13 @@ public class TicketService {
                 multiLock.unlock();
             }
         }
+    }
+
+    // 티켓 예매 서비스
+    @MultiLock(prefix = "lock:concert")
+    public List<Ticket> reserveTicketsAop(Long userId, Long concertId, TicketReserveRequestDto dto) {
+        return ticketCommandService.reserveTickets(userId,concertId,dto);
+
     }
 
     // 티켓 예매 조회 서비스

@@ -61,6 +61,17 @@ public class TicketController {
         TicketReserveResponseDto response = TicketReserveResponseDto.of(tickets, concertId);
         return ResponseEntity.ok(ApiResponse.success("콘서트 예매에 성공했습니다.", response));
     }
+    // 티켓 예매 Redisson
+    @PostMapping("/concerts/{concertId}/tickets/v3")
+    public ResponseEntity<ApiResponse<TicketReserveResponseDto>> reserveTicketsV3(
+            @PathVariable Long concertId,
+            @RequestBody TicketReserveRequestDto request,
+            @AuthenticationPrincipal Long userId
+    ){
+        List<Ticket> tickets = ticketService.reserveTicketsAop(userId, concertId, request);
+        TicketReserveResponseDto response = TicketReserveResponseDto.of(tickets, concertId);
+        return ResponseEntity.ok(ApiResponse.success("콘서트 예매에 성공했습니다.", response));
+    }
 
     // 티켓 예매 조회
     @GetMapping("/users/my/tickets")
