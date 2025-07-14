@@ -6,5 +6,5 @@ public interface SeatStatusProjection {
     Integer getColumnNumber();
     String getSeatLabel();
     Long getPrice();
-    Boolean getIsReserved();
+    Long getIsReserved();
 }
