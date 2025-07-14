@@ -77,7 +77,9 @@ public class RedisConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer()
-                .setAddress("redis://127.0.0.1:6379");
+                .setAddress("redis://127.0.0.1:6379")
+                .setConnectionMinimumIdleSize(2)
+                .setConnectionPoolSize(4);;
         return Redisson.create(config);
     }
 

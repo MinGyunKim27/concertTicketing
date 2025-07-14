@@ -3,7 +3,9 @@ package org.example.concertTicketing.domain.auth.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
 
+@Getter
 public class SignUpRequestDto {
     @NotBlank(message = "사용자 이름을 입력해주세요.")
     private String username;
@@ -32,23 +34,4 @@ public class SignUpRequestDto {
         this.userRole = userRole;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getUserRole() {
-        return userRole;
-    }
 }

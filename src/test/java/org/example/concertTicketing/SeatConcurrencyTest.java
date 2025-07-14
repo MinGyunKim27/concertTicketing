@@ -1,4 +1,4 @@
-package org.example.concertTicketing.domain.ticket.service;
+package org.example.concertTicketing;
 
 import org.example.concertTicketing.domain.concert.entity.Concert;
 import org.example.concertTicketing.domain.concert.repository.ConcertRepository;
@@ -6,6 +6,7 @@ import org.example.concertTicketing.domain.seat.entity.Seat;
 import org.example.concertTicketing.domain.seat.repository.SeatRepository;
 import org.example.concertTicketing.domain.ticket.dto.request.TicketReserveRequestDto;
 import org.example.concertTicketing.domain.ticket.repository.TicketRepository;
+import org.example.concertTicketing.domain.ticket.service.TicketService;
 import org.example.concertTicketing.domain.user.UserRole;
 import org.example.concertTicketing.domain.user.repository.UserRepository;
 import org.example.concertTicketing.domain.venue.entity.Venue;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.example.concertTicketing.domain.user.entity.User;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,8 +27,8 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @DisplayName("동시성 테스트 - 좌석 중복 예약 방지")
 class SeatConcurrencyTest {
