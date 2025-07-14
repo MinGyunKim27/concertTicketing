@@ -34,6 +34,8 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     )
     AND s.row_label = :rowLabel
 """, nativeQuery = true)
+
+
     List<SeatStatusProjection> findSeatStatusesByConcertIdAndRowLabel(
             @Param("concertId") Long concertId,
             @Param("rowLabel") String rowLabel
