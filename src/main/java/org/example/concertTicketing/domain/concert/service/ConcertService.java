@@ -10,33 +10,26 @@ import org.example.concertTicketing.domain.concert.dto.response.ConcertResponseD
 import org.example.concertTicketing.domain.concert.dto.response.ConcertWithRemainingTicketsProjection;
 import org.example.concertTicketing.domain.concert.entity.Concert;
 import org.example.concertTicketing.domain.concert.repository.ConcertRepository;
-import org.example.concertTicketing.domain.seat.dto.response.SeatResponseDto;
 import org.example.concertTicketing.domain.seat.dto.response.SeatStatusDto;
 import org.example.concertTicketing.domain.seat.dto.response.SeatStatusProjection;
-import org.example.concertTicketing.domain.seat.entity.Seat;
 import org.example.concertTicketing.domain.seat.repository.SeatRepository;
 import org.example.concertTicketing.domain.venue.entity.Venue;
 import org.example.concertTicketing.domain.venue.repository.VenueRepository;
-import org.slf4j.Logger;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.querydsl.core.types.dsl.Wildcard.count;
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -144,13 +137,15 @@ public class ConcertService {
 
 
     // 콘서트 단건 조회
-    public ConcertResponseDto getConcert(Long id) {
+    public void getConcert(Long id) {
         Concert concert = concertRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 콘서트를 찾을 수 없습니다."));
 
         Long remainingSeat = concertRepository.countRemainingSeatsByConcertId(id);
-        return ConcertResponseDto.buildResponseDto(concert,remainingSeat);
+        ConcertResponseDto.buildResponseDto(concert, remainingSeat);
     }
+
+
     public ConcertResponseDto getConcert(Long id, String userIdOrIp) {
         String concertKey = "concert:" + id;
         // 1. Redis에서 캐시된 콘서트 DTO 가져오기
@@ -210,7 +205,8 @@ public class ConcertService {
         if (count == null) return 0;
         return Integer.parseInt(count.toString());
     }
-    public boolean incrementViewCount(Long concertId, String userIdOrIp) {
+
+    public void incrementViewCount(Long concertId, String userIdOrIp) {
         String userKey = "concert:view:user:" + concertId;
         String viewCountKey = "concert:viewcount";
         String rankKey = "concert:rank";
@@ -225,9 +221,7 @@ public class ConcertService {
             redisTemplate.opsForZSet().incrementScore(rankKey, concertId.toString(), 1);
             // Set TTL 자정까지
             redisTemplate.expire(userKey, getTTLUntilMidnight()); // 자정때 초기화
-            return true;
         }
-        return false; // 이미 조회함
     }
 
     // 현재 시간부터 다음 자정까지 남은 시간을 계산해서 TTL로 설정

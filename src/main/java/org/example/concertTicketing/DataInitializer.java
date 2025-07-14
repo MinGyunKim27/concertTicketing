@@ -34,10 +34,10 @@ public class DataInitializer {
                         .build()
         );
 
-        for (char row = 'A'; row <= 'T'; row++) {
+        for (char row = 'A'; row <= 'C'; row++) {
             long price = 50000L + ((row - 'A') * 10000L); // A=0, B=1, C=2...
 
-            for (int col = 1; col <= 30; col++) {
+            for (int col = 1; col <= 10; col++) {
                 String seatLabel = row + String.valueOf(col);
                 Seat seat = Seat.builder()
                         .venue(venue)
