@@ -8,6 +8,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -16,19 +18,20 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
 @Configuration
+@EnableCaching
 public class RedisConfig {
-
+    //Redis랑 연결
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(); // 로컬 Redis 설정 기준
+    public LettuceConnectionFactory redisConnectionFactory() {
+        return new LettuceConnectionFactory("localhost", 6379); // 포트는 기본값
     }
-
 
     // Spring에서 Redis에 직접 데이터를 읽고 쓰고 싶을 때 사용하는 템플릿 객체
     @Bean
@@ -69,6 +72,7 @@ public class RedisConfig {
         return mapper;
     }
 
+
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
@@ -76,4 +80,5 @@ public class RedisConfig {
                 .setAddress("redis://127.0.0.1:6379");
         return Redisson.create(config);
     }
+
 }

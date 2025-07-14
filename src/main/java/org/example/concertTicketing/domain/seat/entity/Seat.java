@@ -13,7 +13,10 @@ import org.example.concertTicketing.domain.venue.entity.Venue;
 @AllArgsConstructor
 @Builder
 @Setter
-@Table(name = "seats")
+@Table(name = "seats", indexes = {
+        @Index(name = "idx_seat_venue_id", columnList = "venue_id"),
+        @Index(name = "idx_seat_row_label_column_number", columnList = "row_label, column_number")
+})
 public class Seat extends Timestamped {
 
     @Id
