@@ -24,14 +24,6 @@ public class ApiResponse<T> {
         return response;
     }
 
-    public static <T> ApiResponse<T> success(String message) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.success = true;
-        response.message = message;
-        response.timestamp = LocalDateTime.now().toString();
-        return response;
-    }
-
     public static <T> ApiResponse<T> failure(String message) {
         ApiResponse<T> response = new ApiResponse<>();
         response.success = false;

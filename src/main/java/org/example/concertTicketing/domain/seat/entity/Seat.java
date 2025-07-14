@@ -2,10 +2,7 @@ package org.example.concertTicketing.domain.seat.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.concertTicketing.domain.common.entity.Timestamped;
 import org.example.concertTicketing.domain.venue.entity.Venue;
 
@@ -15,6 +12,7 @@ import org.example.concertTicketing.domain.venue.entity.Venue;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
 @Table(name = "seats")
 public class Seat extends Timestamped {
 

@@ -35,9 +35,6 @@ class SeatConcurrencyTest {
     private TicketService ticketService;
 
     @Autowired
-    private TicketCommandService ticketCommandService;
-
-    @Autowired
     private TicketRepository ticketRepository;
 
     @Autowired
@@ -57,6 +54,8 @@ class SeatConcurrencyTest {
 
     private Long concertId;
     private Long seatId;
+    private Long seatId1;
+    private Long seatId2;
 
     private static final int THREAD_COUNT = 10;
 
@@ -68,9 +67,9 @@ class SeatConcurrencyTest {
         String email = username + "@test.com";
 
         User user = userRepository.save(User.builder()
-                .username(username)         // ✅ 유니크
+                .username(username)
                 .nickname("닉네임")
-                .email(email)               // ✅ 유니크
+                .email(email)
                 .password("encodedPw")
                 .userRole(UserRole.USER)
                 .build());
@@ -94,44 +93,27 @@ class SeatConcurrencyTest {
                 .price(10000L)
                 .build());
 
+        Seat seat1 = seatRepository.save(Seat.builder()
+                .venue(venue)
+                .rowLabel("A")
+                .column(2)
+                .label("A2")
+                .price(10000L)
+                .build());
+
+        Seat seat2 = seatRepository.save(Seat.builder()
+                .venue(venue)
+                .rowLabel("A")
+                .column(3)
+                .label("A3")
+                .price(10000L)
+                .build());
+
         concertId = concert.getId();
         seatId = seat.getId();
+        seatId1 = seat1.getId();
+        seatId2 = seat2.getId();
     }
-
-    @Test
-    void 동시에_같은_좌석을_예약할때_중복되지_않아야한다() throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
-        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
-
-        for (int i = 0; i < THREAD_COUNT; i++) {
-            String randomSuffix = UUID.randomUUID().toString().substring(0, 8);
-            final Long userId = userRepository.save(
-                    User.builder()
-                            .username("user" + randomSuffix)
-                            .nickname("닉네임" + i)
-                            .email("user" + randomSuffix + "@test.com")
-                            .password("encodedPw")
-                            .userRole(UserRole.USER)
-                            .build()
-            ).getId();
-            executorService.execute(() -> {
-                try {
-                    TicketReserveRequestDto dto = new TicketReserveRequestDto(List.of(seatId));
-                    ticketService.reserveTickets(userId, concertId, dto);
-                } catch (Exception e) {
-                    System.out.println("예약 실패 → " + e.getMessage());
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-
-        latch.await();
-
-        long reservedCount = ticketRepository.countBySeatId(seatId);
-        Assertions.assertEquals(1, reservedCount); // 해당 좌석은 단 1명만 예약 가능해야 함
-    }
-
 
     @Test
     void 동시에_같은_좌석을_예약할때_중복되지_않아야한다_v1() throws InterruptedException {
@@ -187,7 +169,7 @@ class SeatConcurrencyTest {
             ).getId();
             executorService.execute(() -> {
                 try {
-                    TicketReserveRequestDto dto = new TicketReserveRequestDto(List.of(seatId));
+                    TicketReserveRequestDto dto = new TicketReserveRequestDto(List.of(seatId1));
                     ticketService.reserveTicketsRedisson(userId, concertId, dto);
                 } catch (Exception e) {
                     System.out.println("예약 실패 → " + e.getMessage());
@@ -199,7 +181,7 @@ class SeatConcurrencyTest {
 
         latch.await();
 
-        long reservedCount = ticketRepository.countBySeatId(seatId);
+        long reservedCount = ticketRepository.countBySeatId(seatId1);
         Assertions.assertEquals(1, reservedCount); // 해당 좌석은 단 1명만 예약 가능해야 함
     }
 
@@ -223,7 +205,7 @@ class SeatConcurrencyTest {
             ).getId();
             executorService.execute(() -> {
                 try {
-                    TicketReserveRequestDto dto = new TicketReserveRequestDto(List.of(seatId));
+                    TicketReserveRequestDto dto = new TicketReserveRequestDto(List.of(seatId2));
                     proxy.reserveTicketsAop(userId, concertId, dto);
                 } catch (Exception e) {
                     System.out.println("예약 실패 → " + e.getMessage());
@@ -235,7 +217,7 @@ class SeatConcurrencyTest {
 
         latch.await();
 
-        long reservedCount = ticketRepository.countBySeatId(seatId);
+        long reservedCount = ticketRepository.countBySeatId(seatId2);
         Assertions.assertEquals(1, reservedCount); // 해당 좌석은 단 1명만 예약 가능해야 함
     }
 }
