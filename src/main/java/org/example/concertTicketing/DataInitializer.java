@@ -6,9 +6,11 @@ import org.example.concertTicketing.domain.seat.entity.Seat;
 import org.example.concertTicketing.domain.seat.repository.SeatRepository;
 import org.example.concertTicketing.domain.venue.entity.Venue;
 import org.example.concertTicketing.domain.venue.repository.VenueRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test")
 @RequiredArgsConstructor
 public class DataInitializer {
 

@@ -27,9 +27,6 @@ public class JwtService {
         Date now = new Date();                // 현재시간
         Date expiration = new Date(now.getTime() + 1000 * 1800); // 만료시간 설정 30분
 
-        // 로그 찍기
-        System.out.println("JWT 생성 시 userRole = " + userRole);
-
         // 2. 토큰 만들기
         return Jwts.builder()
                 .setSubject(userId.toString())

@@ -1,7 +1,7 @@
 package org.example.concertTicketing.domain.concert.service;
 
 
-import jakarta.persistence.criteria.Predicate;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.concertTicketing.domain.common.dto.PagedResponse;
@@ -46,10 +46,14 @@ public class ConcertService {
     private final ConcertRepository concertRepository;
     private final VenueRepository venueRepository;
     private final SeatRepository seatRepository;
+
     //Redis 에서 사용할 키의 이름
     private static final String VIEW_COUNT_KEY = "concert:viewcount";
     //Redis와 상호작용하는 객체이다.>>opsForHash()를 통해 Hash명령어를 쉽게 사용가능하게함.
     private final RedisTemplate<String, Object> redisTemplate;
+
+
+
 
     // 콘서트 생성
     // 굳
@@ -70,6 +74,7 @@ public class ConcertService {
     }
 
     // 콘서트 수정
+
     // 굳
     @CacheEvict(value = "concert", key = "#id") // << 캐시 사용시 수정될때(캐시 무효화) 어노테이션입니다.
     @Transactional
@@ -137,6 +142,7 @@ public class ConcertService {
         return PagedResponse.from(dtoPage);
     }
 
+
     // 콘서트 단건 조회
     public ConcertResponseDto getConcert(Long id) {
         Concert concert = concertRepository.findById(id)
@@ -194,7 +200,7 @@ public class ConcertService {
                         p.getColumnNumber(),
                         p.getSeatLabel(),
                         p.getPrice(),
-                        p.getIsReserved() != 0
+                        p.getIsReserved().equals(1L)
                 ))
                 .collect(Collectors.toList());
     }

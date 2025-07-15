@@ -1,7 +1,6 @@
 package org.example.concertTicketing.domain.seat.repository;
 
-import org.example.concertTicketing.domain.concert.entity.Concert;
-import org.example.concertTicketing.domain.seat.dto.response.SeatStatusDto;
+
 import org.example.concertTicketing.domain.seat.dto.response.SeatStatusProjection;
 import org.example.concertTicketing.domain.seat.entity.Seat;
 import org.example.concertTicketing.domain.venue.entity.Venue;
@@ -29,15 +28,18 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     FROM seats s
     LEFT JOIN tickets t
         ON s.id = t.seat_id
-        AND t.concert_id = :concertId
+    LEFT JOIN orders o
+        ON t.order_id = o.id
+        AND o.concert_id = :concertId
     WHERE s.venue_id = (
         SELECT c.venue_id FROM concerts c WHERE c.id = :concertId
     )
     AND s.row_label = :rowLabel
-""", nativeQuery = true)
+    """, nativeQuery = true)
     List<SeatStatusProjection> findSeatStatusesByConcertIdAndRowLabel(
             @Param("concertId") Long concertId,
             @Param("rowLabel") String rowLabel
     );
 
+    List<Seat> findByLabelContaining(String a1);
 }

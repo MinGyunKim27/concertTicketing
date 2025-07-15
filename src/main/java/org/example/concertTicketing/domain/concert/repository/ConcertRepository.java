@@ -33,8 +33,6 @@ public interface ConcertRepository extends JpaRepository<Concert,Long>, JpaSpeci
     )
     Long countRemainingSeatsByConcertId(@Param("concertId") Long concertId);
 
-
-
     @Query(value = """
     SELECT
         c.id AS id,
@@ -63,7 +61,6 @@ public interface ConcertRepository extends JpaRepository<Concert,Long>, JpaSpeci
             @Param("offset") int offset
     );
 
-
     @Query(value = """
     SELECT COUNT(*)
     FROM concerts c
@@ -79,5 +76,4 @@ public interface ConcertRepository extends JpaRepository<Concert,Long>, JpaSpeci
             @Param("searchStartDate") LocalDateTime searchStartDate,
             @Param("searchEndDate") LocalDateTime searchEndDate
     );
-
 }

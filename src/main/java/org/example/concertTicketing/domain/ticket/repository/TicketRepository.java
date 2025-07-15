@@ -39,4 +39,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     // 좌석 리스트 중 에약된 좌석 ID 추출
     @Query("SELECT t.seat.id FROM Ticket t WHERE t.order.concert.id = :concertId AND t.seat.id IN :seatIds AND t.canceledAt IS NULL")
     List<Long> findReservedSeatIds(@Param("concertId") Long concertId, @Param("seatIds") List<Long> seatIds);
+
+    long countBySeatId(Long seatId);
 }
